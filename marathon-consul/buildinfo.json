@@ -1,0 +1,9 @@
+{
+  "single_source": {
+    "kind": "url_extract",
+    "url": "https://github.com/devimteam/dcos-pakages/blob/master/marathon-consul/marathon-consul_1.3.3_linux_amd64.tar.gz",
+    "sha1": "e85ce11f9b054911b90ad27ac57a6b92bf2a0ba4"
+  },
+  "username": "dcos_marathon",
+  "state_directory": true
+}

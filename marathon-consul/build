@@ -1,0 +1,30 @@
+#!/bin/bash
+
+mkdir -p "$PKG_PATH/usr/"
+
+#cp -rp /pkg/src/marathon/target/scala-2.11/marathon-assembly-*.jar "$PKG_PATH/usr/marathon.jar"
+cp -rp /pkg/src/marathon-consul "$PKG_PATH/usr/marathon-consul"
+
+#chmod -R o+r "$PKG_PATH/usr"
+chmod a+x $PKG_PATH/usr/marathon-consul
+
+marathon-consul_service="$PKG_PATH/dcos.target.wants_master/dcos-marathon-consul.service"
+mkdir -p $(dirname "$marathon-consul_service")
+
+cat <<EOF > "$marathon-consul_service"
+[Unit]
+Description=Marathon-consul: bridge
+[Service]
+User=dcos_marathon
+Restart=always
+StartLimitInterval=0
+RestartSec=15
+LimitNOFILE=16384
+PermissionsStartOnly=True
+EnvironmentFile=/opt/mesosphere/environment
+ExecStartPre=/bin/ping -c1 leader.mesos
+ExecStart=$PKG_PATH/usr/marathon-consul \\
+    --marathon-location=marathon.mesos:8080 \\ 
+    --consul-local-agent-host=consul.marathon.mesos \\
+    --sse-enabled=true
+EOF
